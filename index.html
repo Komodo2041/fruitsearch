@@ -57,13 +57,12 @@
         </div>
         <div id="main" v-show="stan==1">
             <div id="canvaDiv">
-                <canvas ref="canvas" id="myCanvas" width="900" height="900"></canvas>
+                <canvas ref="canvas" id="myCanvas" width="900" height="900" @click="checkClickMapa"></canvas>
             </div>
             <div class="mt10 smallPuzzle">
                 <div v-for="row in nrPuzzless" :key="row" class="puzz">
-                    <canvas class="smallPuzzle" ref="canvas" :id="'puzzle' + row " @mousedown="startDrawing"
-                        @mousemove="draw" @mouseup="stopDrawing" @mouseleave="stopDrawing" width="180" :data-id="row"
-                        height="180"></canvas>
+                    <canvas class="smallPuzzle" ref="canvas" :id="'puzzle' + row " width="60" :data-id="row"
+                        height="60"></canvas>
                 </div>
 
                 <button @click="seeSolution()" class="btn btn-info">

@@ -14,6 +14,7 @@
 
         #myCanvas {
             border: solid 1px #8c8cac;
+            cursor: pointer;
         }
 
         .mt10 {
@@ -31,10 +32,7 @@
             margin-top: 2px !important;
         }
 
-        .smallPuzzle {
-            cursor: pointer;
 
-        }
 
         canvas {
             border: solid 1px #1c1c1c;
@@ -42,9 +40,9 @@
 
         .puzz {
             float: left;
-            margin-right: 15px;
-            width: 180px;
-            height: 180px;
+            margin-right: 7px;
+            width: 60px;
+            height: 60px;
             background: #dcdcdc;
         }
 

@@ -17,8 +17,11 @@ function checkskala(r) {
     }
 }
 
-function getMaxRandom(max) {
+function getMaxRandom(max, x = 0) {
     let n = Math.floor(Math.random() * (max + 1));
+    if (x > 0 && n == 0) {
+        return getMaxRandom(max, 1);
+    }
     return n;
 }
 
@@ -72,14 +75,14 @@ function fillImage(ctx, value, i, j, type) {
     }
 }
 
-function getPosPuzzles(nrpuzzles) {
-    let len = 30 - 6;
+function getPosPuzzles(nrpuzzles, mapa) {
+
     let table = [];
+
     for (i = 0; i < nrpuzzles; i++) {
-        let x = getMaxRandom(len);
-        let y = getMaxRandom(len);
-        if (checkPosiSGood(x, y, table)) {
-            table.push([x, y]);
+        res = getMaxRandom(23, 1);
+        if (checkPosiSGood(res, mapa)) {
+            table.push(res);
         } else {
             i--;
         }
@@ -87,51 +90,71 @@ function getPosPuzzles(nrpuzzles) {
     return table;
 }
 
-function checkPosiSGood(x, y, table, nr = -1) {
-    let res = 1;
-    for (j = 0; j < table.length; j++) {
-        if (nr == j) {
-            continue;
-        }
-        if (Math.abs(table[j][0] - x) <= 6 && Math.abs(table[j][1] - y) <= 6) {
-            res = 0;
-            break;
-        }
+function movepos(pos) {
+    let nr = pos.length;
+    for (i = 0; i < nr - 1; i++) {
+        pos[i] = pos[i + 1];
     }
-    return res;
+    pos[nr - 1] = getMaxRandom(23, 1);
+    return pos;
 }
 
-function fillSmallCanva(table, pos, type = 1) {
+function checkPosiSGood(res, table) {
+    let reso = 0;
+    for (let i = 0; i < 30; i++) {
+        for (let j = 0; j < 30; j++) {
+            if (table[i][j] == res) {
+                reso = 1;
+                break;
+            }
+        }
+    }
+    return reso;
+}
+
+function fillSmallCanva(pos, type = 1) {
+
     let nr = pos.length;
+
     for (i = 1; i <= nr; i++) {
         let c = document.getElementById("puzzle" + i);
         let ctx = c.getContext("2d");
         ctx.fillStyle = 'white';
-        fillPuzzle(table, pos[i - 1], type, ctx);
+        fillPuzzle(pos[i - 1], type, ctx);
     }
 }
 
-function fillPuzzle(table, pos, type, ctx) {
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 6; j++) {
-            fillImage(ctx, table[pos[0] + i][pos[1] + j], i, j, type);
-        }
+function fillPuzzle(pos, type, ctx) {
+
+    let imgpath = getImg(type, pos, 2);
+
+    if (imgpath) {
+        let obrazek = new Image();
+        obrazek.src = imgpath;
+        ctx.drawImage(obrazek, 0, 0, 60, 60);
     }
 }
 
-function seeSolution(pos) {
+function seeSolution(pos, table) {
     let nr = pos.length;
     let c = document.getElementById("myCanvas");
     let ctx = c.getContext("2d");
     ctx.lineWidth = 4;
     ctx.strokeStyle = "navy";
     ctx.lineJoin = "bevel";
-    for (i = 1; i <= nr; i++) {
-        ctx.strokeRect(pos[i - 1][0] * 30, pos[i - 1][1] * 30, 6 * 30, 6 * 30);
+    for (i = 0; i < nr; i++) {
+        for (let k = 0; k < 30; k++) {
+            for (let j = 0; j < 30; j++) {
+                if (table[k][j] == pos[i]) {
+                    ctx.strokeRect(k * 30, j * 30, 30, 30);
+                }
+            }
+        }
+
     }
 }
 
-function getImg(type, nr) {
+function getImg(type, nr, mini = 1) {
 
     path = "grafika/";
     switch (type) {
@@ -145,7 +168,11 @@ function getImg(type, nr) {
             path += "e" + nr;
             break;
     }
-    path += "_mini.jpg";
+    if (mini == 1) {
+        path += "_mini.jpg";
+    } else {
+        path += "_big.jpg";
+    }
     return path;
 }
 
@@ -173,17 +200,7 @@ function checkposFit(pos, mousepos) {
     return 0;
 }
 
-function addPoints(pos, table) {
-    let res = 0;
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 6; j++) {
-            if (table[pos[0] + i][pos[1] + j]) {
-                res++;
-            }
-        }
-    }
-    return res;
-}
+
 
 function changePlaceInBigCanva(pos, table, density) {
     let newTable = table;
