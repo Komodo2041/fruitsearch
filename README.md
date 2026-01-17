@@ -1,4 +1,4 @@
-# search Puzzle
+# Puzzle Search Fruit Game
  
 
 <h1 align="center">Puzzle Search</h1>
